@@ -27,14 +27,16 @@ namespace Microsoft.AspNetCore.Razor.Language.Components
             return MangledClassNamePrefix + className;
         }
 
-        public static bool IsMangledClass(string className)
+        public static bool IsMangledClass(string className) => IsMangledClass(className.AsSpan());
+
+        public static bool IsMangledClass(ReadOnlySpan<char> className)
         {
-            if (string.IsNullOrEmpty(className))
+            if (className.IsEmpty)
             {
                 return false;
             }
 
-            return className.StartsWith(MangledClassNamePrefix, StringComparison.Ordinal);
+            return className.StartsWith(MangledClassNamePrefix.AsSpan(), StringComparison.Ordinal);
         }
 
         public static class Common

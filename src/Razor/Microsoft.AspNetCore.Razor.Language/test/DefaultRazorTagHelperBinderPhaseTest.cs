@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -1301,7 +1301,7 @@ namespace Microsoft.AspNetCore.Razor.Language
         public void IsTypeInNamespace_WorksAsExpected(string typeName, string @namespace, bool expected)
         {
             // Arrange & Act
-            var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.IsTypeInNamespace(typeName, @namespace);
+            var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.IsTypeInNamespace(typeName.AsSpan(), @namespace);
 
             // Assert
             Assert.Equal(expected, result);
@@ -1318,7 +1318,7 @@ namespace Microsoft.AspNetCore.Razor.Language
         public void IsTypeInScope_WorksAsExpected(string typeName, string currentNamespace, bool expected)
         {
             // Arrange & Act
-            var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.IsTypeInScope(typeName, currentNamespace);
+            var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.IsTypeInScope(typeName.AsSpan(), currentNamespace);
 
             // Assert
             Assert.Equal(expected, result);
@@ -1355,12 +1355,12 @@ namespace Microsoft.AspNetCore.Razor.Language
         {
             // Arrange & Act
             var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.TrySplitNamespaceAndType(
-                fullTypeName, out var @namespace, out var typeName);
+                fullTypeName.AsSpan(), out var @namespace, out var typeName);
 
             // Assert
             Assert.Equal(expectedResult, result);
-            Assert.Equal(expectedNamespace, DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.GetTextSpanContent(@namespace, fullTypeName));
-            Assert.Equal(expectedTypeName, DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.GetTextSpanContent(typeName, fullTypeName));
+            Assert.True(expectedNamespace.AsSpan().Equals(DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.GetTextSpanContent(@namespace, fullTypeName.AsSpan()), StringComparison.Ordinal));
+            Assert.True(expectedTypeName.AsSpan().Equals(DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.GetTextSpanContent(typeName, fullTypeName.AsSpan()), StringComparison.Ordinal));
         }
 
         private static RazorSourceDocument CreateComponentTestSourceDocument(string content, string filePath = null)

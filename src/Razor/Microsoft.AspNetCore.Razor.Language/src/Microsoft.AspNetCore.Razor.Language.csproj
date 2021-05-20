@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Include="$(SharedSourceRoot)HashCodeCombiner\*.cs" />
+    <Reference Include="System.Memory" />
   </ItemGroup>
 
 </Project>

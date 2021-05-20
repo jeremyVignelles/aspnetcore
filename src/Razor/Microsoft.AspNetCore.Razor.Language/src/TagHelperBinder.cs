@@ -10,9 +10,9 @@ namespace Microsoft.AspNetCore.Razor.Language
     /// <summary>
     /// Enables retrieval of <see cref="TagHelperBinding"/>'s.
     /// </summary>
-    internal class TagHelperBinder
+    internal sealed class TagHelperBinder
     {
-        private IDictionary<string, HashSet<TagHelperDescriptor>> _registrations;
+        private readonly Dictionary<string, HashSet<TagHelperDescriptor>> _registrations;
         private readonly string _tagHelperPrefix;
 
         /// <summary>
@@ -75,11 +75,11 @@ namespace Microsoft.AspNetCore.Razor.Language
                 descriptors = matchingDescriptors.Concat(descriptors);
             }
 
-            var tagNameWithoutPrefix = _tagHelperPrefix != null ? tagName.Substring(_tagHelperPrefix.Length) : tagName;
-            var parentTagNameWithoutPrefix = parentTagName;
+            var tagNameWithoutPrefix = _tagHelperPrefix != null ? tagName.AsSpan(_tagHelperPrefix.Length) : tagName.AsSpan();
+            var parentTagNameWithoutPrefix = parentTagName.AsSpan();
             if (_tagHelperPrefix != null && parentIsTagHelper)
             {
-                parentTagNameWithoutPrefix = parentTagName.Substring(_tagHelperPrefix.Length);
+                parentTagNameWithoutPrefix = parentTagName.AsSpan(_tagHelperPrefix.Length);
             }
 
             Dictionary<TagHelperDescriptor, IReadOnlyList<TagMatchingRuleDescriptor>> applicableDescriptorMappings = null;
